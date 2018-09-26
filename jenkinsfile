@@ -1,0 +1,22 @@
+pipeline { 
+    agent any
+    stages {
+        stage('Unit Test'){
+            steps {
+                sh 'cd /opt/deployment/test/src/test/lambda_hello_test;python3.6 hello.py'
+            }
+        }
+        stage('Build & Deploy') {
+            steps {
+                sh 'echo $PATH;cd /opt/deployment/test;python3.6 --version;serverless deploy |tee deploy.out'
+                
+            }
+        }
+        stage('Integration Test'){
+            steps{
+                sh 'cd /opt/deployment/test;ls -ltr;curl `less deploy.out |grep https |sed s/^........//`'
+            }
+            }
+    }
+}
+

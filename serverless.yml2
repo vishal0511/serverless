@@ -1,0 +1,46 @@
+service: test-deploy
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: dev
+#  profile: ${self:custom.profiles.${self:provider.stage}}
+  role: arn:aws:iam::485446758892:role/lambda_s3_full_access
+
+  environment:
+    PYTHONPATH: /var/runtime:/var/task:/var/task/src:/var/task/libs:/var/task/site-packages
+#    STAGE: ${self:custom.stage}
+#    custom:
+#    stage: ${opt:stage, self:provider.stage}
+#    rolearn: arn:aws:iam::485446758892:role/lambda_s3_full_access
+package:
+  individually: true
+  include:
+    - src/functions/__init__.py
+  exclude:
+    - src/functions/**
+    - .idea/**
+    - testService/**
+    - out
+    - libs/
+    - node_modules/**
+
+plugins:
+  - serverless-python-requirements
+  - serverless-stack-output
+
+custom:
+  output:
+     handler: src/functions/lambda_hello/hello.handler    
+     file: .build/output.json
+
+functions:
+  lambda_hello:
+    handler: src/functions/lambda_hello/hello.handler
+    package:
+      include:
+        - src/functions/lambda_hello/**
+    events:
+      - http:
+          path: /datetime
+          method: get
