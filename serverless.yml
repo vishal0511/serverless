@@ -12,7 +12,7 @@ provider:
 #    STAGE: ${self:custom.stage}
 #    custom:
 #    stage: ${opt:stage, self:provider.stage}
-#    rolearn: arn:aws:iam::485446758892:role/lambda_s3_full_access
+#    
 package:
   individually: true
   include:
